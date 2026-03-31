@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+
+# Build output
+dist/
+*.log
+
+# Compiled binaries
+add_admin
+gifts-api-server
+
