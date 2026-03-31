@@ -1,0 +1,150 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Fonts imported instead of Google Web Fonts to prevent flashing */
+@import "@fontsource/playfair-display/400.css";
+@import "@fontsource/playfair-display/600.css";
+@import "@fontsource/playfair-display/700.css";
+@import "@fontsource/dm-sans/400.css";
+@import "@fontsource/dm-sans/500.css";
+@import "@fontsource/dm-sans/600.css";
+@import "@fontsource/dancing-script/600.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-accent: 'Dancing Script', cursive;
+
+  /* Flora Color Palette */
+  --color-blush: #F9E8EC;
+  --color-rose: #E8A0B4;
+  --color-rose-dark: #C4667E;
+  --color-sage: #B5C9B7;
+  --color-cream: #FDF6F0;
+  --color-bark: #5C3D2E;
+  --color-mist: #F0EBE3;
+  --color-border: #E8DDD5;
+  --color-success: #6BAB8B;
+  --color-warning: #E8B86D;
+  --color-error: #D9534F;
+
+  /* Custom Shadows */
+  --shadow-soft: 0 4px 24px rgba(92, 61, 46, 0.08);
+  --shadow-hover: 0 8px 32px rgba(92, 61, 46, 0.14);
+  --shadow-card: 0 2px 12px rgba(92, 61, 46, 0.06);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--error);
+  --color-accent-foreground: var(--color-bark);
+  --color-accent: var(--color-blush);
+  --color-muted-foreground: oklch(0.556 0 0);
+  --color-muted: var(--color-mist);
+  --color-secondary-foreground: var(--color-rose-dark);
+  --color-secondary: transparent;
+  --color-primary-foreground: #ffffff;
+  --color-primary: var(--color-rose);
+  --color-popover-foreground: var(--color-bark);
+  --color-popover: #ffffff;
+  --color-card-foreground: var(--color-bark);
+  --color-card: var(--color-mist);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --background: #FDF6F0; /* Cream */
+  --foreground: #5C3D2E; /* Bark */
+  --card: #F0EBE3; /* Mist */
+  --card-foreground: #5C3D2E; /* Bark */
+  --popover: #FFFFFF;
+  --popover-foreground: #5C3D2E;
+  --primary: #E8A0B4; /* Rose */
+  --primary-foreground: #FFFFFF;
+  --secondary: transparent;
+  --secondary-foreground: #C4667E; /* Rose dark */
+  --muted: #F0EBE3; /* Mist */
+  --muted-foreground: oklch(0.556 0 0); /* Greyish */
+  --accent: #F9E8EC; /* Blush */
+  --accent-foreground: #5C3D2E;
+  --destructive: #D9534F; /* Error */
+  --border: #E8DDD5;
+  --input: #E8DDD5;
+  --ring: #E8A0B4;
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: #FDF6F0; /* Cream */
+  --sidebar-foreground: #5C3D2E;
+  --sidebar-primary: #E8A0B4;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F9E8EC;
+  --sidebar-accent-foreground: #5C3D2E;
+  --sidebar-border: #E8DDD5;
+  --sidebar-ring: #E8A0B4;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-cream text-bark font-body;
+  }
+}
+
+@layer utilities {
+  .bg-floral-texture {
+    /* Subtle CSS radial-gradient pattern to represent floral texture */
+    background-image: radial-gradient(var(--color-blush) 2px, transparent 2px), radial-gradient(var(--color-blush) 2px, transparent 2px);
+    background-size: 60px 60px;
+    background-position: 0 0, 30px 30px;
+  }
+  
+  /* Thin scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-mist);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-rose);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-rose-dark);
+  }
+}
