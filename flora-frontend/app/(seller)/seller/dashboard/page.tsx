@@ -136,10 +136,10 @@ export default function SellerDashboardPage() {
               {/* KPI Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                  {[
-                    { label: 'Total Revenue', value: '0 TMT', icon: <DollarSign className="w-6 h-6" />, color: 'bg-green-50 text-green-600' },
-                    { label: 'Active Orders', value: '0', icon: <ShoppingBag className="w-6 h-6" />, color: 'bg-rose-50 text-rose' },
-                    { label: 'Total Products', value: '0', icon: <Package className="w-6 h-6" />, color: 'bg-bark/5 text-bark/40' },
-                    { label: 'Shop Rating', value: seller?.stats?.avg_rating || '5.0', icon: <Star className="w-6 h-6" />, color: 'bg-amber-50 text-amber-500' }
+                    { label: 'Total Revenue', value: formatPrice(seller?.stats?.total_revenue || 0), icon: <DollarSign className="w-6 h-6" />, color: 'bg-green-50 text-green-600' },
+                    { label: 'Completed Orders', value: seller?.stats?.completed_orders?.toString() || '0', icon: <ShoppingBag className="w-6 h-6" />, color: 'bg-rose-50 text-rose' },
+                    { label: 'Total Products', value: seller?.stats?.total_products?.toString() || '0', icon: <Package className="w-6 h-6" />, color: 'bg-bark/5 text-bark/40' },
+                    { label: 'Shop Rating', value: seller?.stats?.avg_rating?.toFixed(1) || '5.0', icon: <Star className="w-6 h-6" />, color: 'bg-amber-50 text-amber-500' }
                  ].map((kpi, i) => (
                     <Card key={i} className="rounded-[2.5rem] border-transparent shadow-premium overflow-hidden group hover:-translate-y-1 transition-all">
                        <CardHeader className="p-8 pb-4">

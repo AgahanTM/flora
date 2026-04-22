@@ -74,9 +74,15 @@ func (c *ProductController) GetProduct(ctx *gin.Context) {
 }
 
 func (c *ProductController) CreateProduct(ctx *gin.Context) {
-	// Assume seller ID from token context
+	// Resolve seller ID from token's userID
 	userIDStr, _ := ctx.Get("user_id")
-	sellerID, _ := uuid.Parse(userIDStr.(string))
+	userID, _ := uuid.Parse(userIDStr.(string))
+
+	seller, err := c.sellerService.GetSellerByUserID(ctx.Request.Context(), userID)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "seller not found"})
+		return
+	}
 
 	var product models.Product
 	if err := ctx.ShouldBindJSON(&product); err != nil {
@@ -84,7 +90,7 @@ func (c *ProductController) CreateProduct(ctx *gin.Context) {
 		return
 	}
 	
-	product.SellerID = sellerID
+	product.SellerID = seller.ID
 
 	// In real setup, tags/occasions from request payload usually bound differently, simplified here
 	var tags []string // Assume we ignore for brief implementation limits
@@ -271,9 +277,16 @@ func (c *ProductController) UpdateInventory(ctx *gin.Context) {
 
 func (c *ProductController) GetLowStockAlerts(ctx *gin.Context) {
 	userIDStr, _ := ctx.Get("user_id")
-	sellerID, _ := uuid.Parse(userIDStr.(string))
+	userID, _ := uuid.Parse(userIDStr.(string))
 
-	alerts, err := c.productService.GetLowStockAlerts(ctx.Request.Context(), sellerID)
+	// Resolve sellerID from userID
+	seller, err := c.sellerService.GetSellerByUserID(ctx.Request.Context(), userID)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "seller not found"})
+		return
+	}
+
+	alerts, err := c.productService.GetLowStockAlerts(ctx.Request.Context(), seller.ID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

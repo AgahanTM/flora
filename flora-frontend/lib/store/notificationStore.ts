@@ -37,7 +37,8 @@ export const useNotificationStore = create<NotificationState>()(
       fetchNotifications: async () => {
         set({ isLoading: true });
         try {
-          const { data } = await apiClient.get('/notifications');
+          const res = await apiClient.get('/notifications');
+          const data = (Array.isArray(res.data) ? res.data : res.data?.data) || [];
           const unread = data.filter((n: Notification) => !n.is_read).length;
           set({ 
             notifications: data, 

@@ -61,7 +61,15 @@ func (c *OrderController) GetOrder(ctx *gin.Context) {
 	userID, _ := uuid.Parse(userIDStr.(string))
 	role, _ := ctx.Get("role")
 
-	if role != "admin" && order.CustomerID != userID && order.SellerID != userID {
+	if role == "seller" {
+		seller, _ := c.sellerService.GetSellerByUserID(ctx.Request.Context(), userID)
+		if seller != nil && order.SellerID == seller.ID {
+			// Authorized as seller
+		} else if role != "admin" && order.CustomerID != userID {
+			ctx.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+			return
+		}
+	} else if role != "admin" && order.CustomerID != userID {
 		ctx.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
 		return
 	}
@@ -93,7 +101,12 @@ func (c *OrderController) UpdateStatus(ctx *gin.Context) {
 	if role == "admin" {
 		updateErr = c.orderService.AdminUpdateStatus(ctx.Request.Context(), orderID, userID, req.Status, req.Note)
 	} else if role == "seller" {
-		updateErr = c.orderService.SellerUpdateStatus(ctx.Request.Context(), orderID, userID, req.Status, req.Note)
+		seller, err := c.sellerService.GetSellerByUserID(ctx.Request.Context(), userID)
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{"error": "seller not found"})
+			return
+		}
+		updateErr = c.orderService.SellerUpdateStatus(ctx.Request.Context(), orderID, seller.ID, req.Status, req.Note)
 	} else if role == "courier" {
 		updateErr = c.orderService.CourierUpdateStatus(ctx.Request.Context(), orderID, userID, req.Status, req.Note)
 	} else if req.Status == "cancelled" {

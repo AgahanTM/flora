@@ -145,7 +145,7 @@ func (r *productRepository) GetBySellerID(ctx context.Context, sellerID uuid.UUI
 	var total int64
 	q := r.db.WithContext(ctx).Model(&models.Product{}).Where("seller_id = ?", sellerID)
 	q.Count(&total)
-	err := q.Preload("Images").Preload("Variants").
+	err := q.Preload("Category").Preload("Inventory").Preload("Images").Preload("Variants").
 		Offset(offset).Limit(limit).Order("created_at DESC").Find(&products).Error
 	return products, total, err
 }

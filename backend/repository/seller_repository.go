@@ -61,7 +61,13 @@ func (r *sellerRepository) Create(ctx context.Context, seller *models.Seller) er
 
 func (r *sellerRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.Seller, error) {
 	var seller models.Seller
-	err := r.db.WithContext(ctx).Preload("Stats").Preload("WorkingHours").First(&seller, "id = ?", id).Error
+	err := r.db.WithContext(ctx).
+		Preload("Stats").
+		Preload("WorkingHours").
+		Preload("Documents").
+		Preload("BankDetails").
+		Preload("DeliveryZones").
+		First(&seller, "id = ?", id).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, ErrSellerNotFound
 	}
@@ -70,7 +76,13 @@ func (r *sellerRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.S
 
 func (r *sellerRepository) GetByUserID(ctx context.Context, userID uuid.UUID) (*models.Seller, error) {
 	var seller models.Seller
-	err := r.db.WithContext(ctx).Where("user_id = ?", userID).First(&seller).Error
+	err := r.db.WithContext(ctx).
+		Preload("Stats").
+		Preload("WorkingHours").
+		Preload("Documents").
+		Preload("BankDetails").
+		Preload("DeliveryZones").
+		Where("user_id = ?", userID).First(&seller).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, ErrSellerNotFound
 	}

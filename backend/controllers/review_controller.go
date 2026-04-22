@@ -56,12 +56,19 @@ func (c *ReviewController) RespondToReview(ctx *gin.Context) {
 		return
 	}
 
-	sellerIDStr, _ := ctx.Get("user_id")
-	sellerID, _ := uuid.Parse(sellerIDStr.(string))
+	userIDStr, _ := ctx.Get("user_id")
+	userID, _ := uuid.Parse(userIDStr.(string))
+
+	// Resolve sellerID from userID
+	seller, err := c.sellerService.GetSellerByUserID(ctx.Request.Context(), userID)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "seller not found"})
+		return
+	}
 
 	resp := &models.ReviewResponse{
 		ReviewID:     reviewID,
-		SellerID:     sellerID,
+		SellerID:     seller.ID,
 		ResponseText: req.Response,
 	}
 

@@ -187,7 +187,7 @@ function SellerOrdersContent() {
                                      <span className="text-[10px] font-black uppercase tracking-widest">Net Revenue</span>
                                   </div>
                                   <p className="text-xl font-display font-bold text-rose">
-                                     {formatPrice(parseFloat(order.total_amount))}
+                                     {formatPrice(parseFloat((order as any).total_price || order.total_amount || '0'))}
                                   </p>
                                   <p className="text-[10px] font-black uppercase tracking-widest text-bark/20 italic">TMT Settlement Pending</p>
                                </div>

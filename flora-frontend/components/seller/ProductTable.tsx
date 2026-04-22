@@ -101,7 +101,7 @@ export function ProductTable({ products, onDelete, onToggleStatus, isLoading }: 
                       </div>
                     </td>
                     <td className="px-6 py-6 font-medium text-sm text-bark/70">
-                      {product.category_id}
+                      {product.category?.name || product.category_id}
                     </td>
                     <td className="px-6 py-6 font-bold text-bark">
                       {formatPrice(parseFloat(product.base_price))}
