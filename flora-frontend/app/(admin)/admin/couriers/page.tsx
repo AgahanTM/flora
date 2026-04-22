@@ -31,7 +31,7 @@ export default function AdminCouriersPage() {
     queryKey: ['admin-couriers'],
     queryFn: async () => {
       const { data } = await adminApi.getCouriers();
-      return data as Courier[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as Courier[];
     }
   });
 
@@ -39,7 +39,7 @@ export default function AdminCouriersPage() {
     queryKey: ['admin-delivery-zones'],
     queryFn: async () => {
       const { data } = await adminApi.getDeliveryZones();
-      return data as DeliveryZone[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as DeliveryZone[];
     }
   });
 

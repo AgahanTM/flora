@@ -38,7 +38,7 @@ export default function AdminProductsPage() {
     queryKey: ['admin-products'],
     queryFn: async () => {
       const { data } = await apiClient.get('/products');
-      return data as Product[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as Product[];
     }
   });
 
@@ -46,7 +46,7 @@ export default function AdminProductsPage() {
     queryKey: ['admin-categories'],
     queryFn: async () => {
       const { data } = await adminApi.getCategories();
-      return data as Category[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as Category[];
     }
   });
 
@@ -54,7 +54,7 @@ export default function AdminProductsPage() {
     queryKey: ['admin-occasions'],
     queryFn: async () => {
       const { data } = await apiClient.get('/occasions');
-      return data as Occasion[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as Occasion[];
     }
   });
 
@@ -62,7 +62,7 @@ export default function AdminProductsPage() {
     queryKey: ['admin-personalization-types'],
     queryFn: async () => {
       const { data } = await apiClient.get('/personalization/types');
-      return data as PersonalizationType[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as PersonalizationType[];
     }
   });
 
@@ -77,8 +77,8 @@ export default function AdminProductsPage() {
   });
 
   const filteredProducts = products?.filter(p => 
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.id.toLowerCase().includes(searchQuery.toLowerCase())
+    p?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    p?.id?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -147,10 +147,10 @@ export default function AdminProductsPage() {
                             <td className="px-8 py-6">
                                <div className="flex items-center gap-4">
                                   <div className="w-12 h-12 rounded-xl bg-mist flex items-center justify-center overflow-hidden border border-mist-dark/5 relative">
-                                     {product.images?.[0] ? <Image src={product.images[0].image_url} alt={product.name} fill className="object-cover" /> : <Package className="w-6 h-6 text-bark/20" />}
+                                     {(product.images?.[0] as any)?.url || product?.images?.[0]?.image_url ? <Image src={(product.images[0] as any).url || product.images[0].image_url} alt={product.name || (product as any).title || 'Product'} fill className="object-cover" /> : <Package className="w-6 h-6 text-bark/20" />}
                                   </div>
                                   <div>
-                                     <p className="font-bold text-bark group-hover:text-rose transition-colors">{product.name}</p>
+                                     <p className="font-bold text-bark group-hover:text-rose transition-colors">{product.name || (product as any).title || 'Unknown Product'}</p>
                                      <p className="text-[10px] font-medium text-bark/40 italic">SLUG: {product.slug}</p>
                                   </div>
                                </div>

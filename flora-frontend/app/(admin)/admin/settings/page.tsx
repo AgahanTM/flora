@@ -31,7 +31,7 @@ export default function AdminSettingsPage() {
     queryKey: ['admin-settings'],
     queryFn: async () => {
       const { data } = await adminApi.getSettings();
-      return data as SystemSetting[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as SystemSetting[];
     }
   });
 
@@ -39,7 +39,8 @@ export default function AdminSettingsPage() {
     queryKey: ['admin-logs', page],
     queryFn: async () => {
       const { data } = await adminApi.getLogs({ page, limit: 15 });
-      return data as { data: AdminLog[], total: number };
+      // Backend currently returns a flat array for logs
+      return (Array.isArray(data) ? { data, total: data.length } : (data.data ? data : { data: [], total: 0 })) as { data: AdminLog[], total: number };
     }
   });
 

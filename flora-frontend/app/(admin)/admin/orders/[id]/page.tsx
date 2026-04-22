@@ -37,7 +37,7 @@ export default function AdminOrderDetailPage() {
     queryKey: ['admin-order-detail', id],
     queryFn: async () => {
       const { data } = await apiClient.get(`/orders/${id}`);
-      return data as Order;
+      return (data.data || data) as Order;
     }
   });
 

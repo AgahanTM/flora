@@ -43,7 +43,8 @@ function SellerSettingsContent() {
     queryKey: ['seller-profile'],
     queryFn: async () => {
       const { data } = await apiClient.get('/seller/profile');
-      return data;
+      // Backend returns { data: sellerObject }, extract the inner seller
+      return (data?.data || data) as Seller;
     }
   });
 
@@ -61,7 +62,7 @@ function SellerSettingsContent() {
     );
   }
 
-  const seller = profile?.seller as Seller;
+  const seller = profile as Seller;
 
   return (
     <div className="container mx-auto px-6 max-w-6xl pt-12 space-y-12">
@@ -118,9 +119,9 @@ function SellerSettingsContent() {
             >
               {activeTab === 'profile' && <ProfileTab seller={seller} />}
               {activeTab === 'kyc' && <KycTab sellerId={seller.id} />}
-              {activeTab === 'bank' && <BankTab sellerId={seller.id} currentBank={profile.bank_details} />}
-              {activeTab === 'hours' && <HoursTab sellerId={seller.id} currentHours={profile.working_hours} />}
-              {activeTab === 'zones' && <ZonesTab sellerId={seller.id} currentZones={profile.delivery_zones} />}
+              {activeTab === 'bank' && <BankTab sellerId={seller.id} currentBank={(seller as any)?.bank_details?.[0]} />}
+              {activeTab === 'hours' && <HoursTab sellerId={seller.id} currentHours={(seller as any)?.working_hours || []} />}
+              {activeTab === 'zones' && <ZonesTab sellerId={seller.id} currentZones={(seller as any)?.delivery_zones || []} />}
               {activeTab === 'slots' && <SlotsTab sellerId={seller.id} />}
             </motion.div>
           </AnimatePresence>
@@ -229,7 +230,8 @@ function KycTab({ sellerId }: { sellerId: string }) {
     queryKey: ['seller-documents'],
     queryFn: async () => {
       const { data } = await apiClient.get('/seller/profile');
-      return data.documents as SellerDocument[];
+      const seller = data?.data || data;
+      return (seller?.documents || []) as SellerDocument[];
     }
   });
 
@@ -544,7 +546,7 @@ function ZonesTab({ sellerId, currentZones }: { sellerId: string, currentZones: 
     queryKey: ['admin-delivery-zones'],
     queryFn: async () => {
       const { data } = await apiClient.get('/admin/delivery/zones');
-      return data as DeliveryZone[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as DeliveryZone[];
     }
   });
 
@@ -629,7 +631,7 @@ function SlotsTab({ sellerId }: { sellerId: string }) {
     queryKey: ['seller-delivery-slots'],
     queryFn: async () => {
       const { data } = await apiClient.get('/seller/delivery/time-slots');
-      return data as TimeSlot[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as TimeSlot[];
     }
   });
 

@@ -73,9 +73,12 @@ export function ProductTable({ products, onDelete, onToggleStatus, isLoading }: 
                 const isLowStock = product.inventory && 
                   (product.inventory.quantity_total - product.inventory.quantity_reserved) <= product.inventory.low_stock_threshold;
                 
-                const primaryImage = product.images.find(img => img.is_primary)?.image_url || 
-                                    product.images[0]?.image_url || 
-                                    '/images/placeholder-product.jpg';
+                const safeImages = Array.isArray(product.images) ? product.images : [];
+                const primaryImage = (safeImages.find(img => img.is_primary) as any)?.url || 
+                                     safeImages.find(img => img.is_primary)?.image_url || 
+                                     (safeImages[0] as any)?.url || 
+                                     safeImages[0]?.image_url || 
+                                     '/images/placeholder-product.jpg';
 
                 return (
                   <motion.tr 
@@ -92,7 +95,7 @@ export function ProductTable({ products, onDelete, onToggleStatus, isLoading }: 
                           <Image src={primaryImage} alt={product.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                         </div>
                         <div className="min-w-0">
-                          <p className="font-bold text-bark truncate">{product.name}</p>
+                          <p className="font-bold text-bark truncate">{product.name || (product as any).title || 'Unknown Product'}</p>
                           <p className="text-[10px] font-black uppercase tracking-widest text-bark/30 italic">ID: {product.id.slice(0, 8)}</p>
                         </div>
                       </div>

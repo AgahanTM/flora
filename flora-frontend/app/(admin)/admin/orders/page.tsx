@@ -38,7 +38,7 @@ export default function AdminOrdersPage() {
     queryFn: async () => {
       const url = activeStatus === 'all' ? '/admin/orders' : `/admin/orders?status=${activeStatus}`;
       const { data } = await apiClient.get(url);
-      return data as Order[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as Order[];
     }
   });
 

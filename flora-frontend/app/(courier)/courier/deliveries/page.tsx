@@ -35,7 +35,7 @@ export default function CourierDeliveriesPage() {
       else statusParam = 'pending,assigned,picked_up,en_route';
 
       const { data } = await courierApi.getDeliveries(statusParam);
-      return data as Delivery[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as Delivery[];
     }
   });
 

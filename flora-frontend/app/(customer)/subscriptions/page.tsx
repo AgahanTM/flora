@@ -39,7 +39,7 @@ export default function SubscriptionsPage() {
     queryKey: ['subscription-plans'],
     queryFn: async () => {
       const { data } = await apiClient.get('/subscriptions/plans');
-      return data as SubscriptionPlan[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as SubscriptionPlan[];
     }
   });
 
@@ -47,7 +47,7 @@ export default function SubscriptionsPage() {
     queryKey: ['subscriptions'],
     queryFn: async () => {
       const { data } = await apiClient.get('/subscriptions');
-      return data as Subscription[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as Subscription[];
     }
   });
 
@@ -55,7 +55,7 @@ export default function SubscriptionsPage() {
     queryKey: ['addresses'],
     queryFn: async () => {
       const { data } = await apiClient.get('/addresses');
-      return data as Address[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as Address[];
     }
   });
 

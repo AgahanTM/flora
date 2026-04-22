@@ -32,7 +32,7 @@ export default function AdminPromotionsPage() {
     queryKey: ['admin-promotions'],
     queryFn: async () => {
       const { data } = await adminApi.getPromotions();
-      return data as Promotion[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as Promotion[];
     }
   });
 
@@ -40,7 +40,7 @@ export default function AdminPromotionsPage() {
     queryKey: ['admin-sellers-all'],
     queryFn: async () => {
       const { data } = await apiClient.get('/admin/sellers');
-      return data as Seller[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as Seller[];
     }
   });
 

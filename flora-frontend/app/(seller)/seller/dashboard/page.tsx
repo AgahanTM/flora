@@ -28,25 +28,26 @@ export default function SellerDashboardPage() {
     queryKey: ['seller-profile'],
     queryFn: async () => {
       const { data } = await apiClient.get('/seller/profile');
-      return data;
+      // Backend returns { data: sellerObject }, extract the inner seller
+      return (data?.data || data) as Seller;
     }
   });
 
   const { data: recentOrders = [], isLoading: isOrdersLoading } = useQuery({
     queryKey: ['seller-orders-recent'],
-    enabled: profile?.seller?.status === 'approved',
+    enabled: profile?.status === 'approved',
     queryFn: async () => {
       const { data } = await apiClient.get('/seller/orders', { params: { limit: 5 } });
-      return data as Order[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as Order[];
     }
   });
 
   const { data: lowStockProducts = [], isLoading: isStockLoading } = useQuery({
     queryKey: ['seller-products-low-stock'],
-    enabled: profile?.seller?.status === 'approved',
+    enabled: profile?.status === 'approved',
     queryFn: async () => {
       const { data } = await apiClient.get('/seller/products/low-stock');
-      return data as Product[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as Product[];
     }
   });
 
@@ -58,7 +59,7 @@ export default function SellerDashboardPage() {
     );
   }
 
-  const seller = profile?.seller as Seller;
+  const seller = profile as Seller;
   const status = seller?.status || 'pending';
 
   return (
@@ -138,7 +139,7 @@ export default function SellerDashboardPage() {
                     { label: 'Total Revenue', value: '0 TMT', icon: <DollarSign className="w-6 h-6" />, color: 'bg-green-50 text-green-600' },
                     { label: 'Active Orders', value: '0', icon: <ShoppingBag className="w-6 h-6" />, color: 'bg-rose-50 text-rose' },
                     { label: 'Total Products', value: '0', icon: <Package className="w-6 h-6" />, color: 'bg-bark/5 text-bark/40' },
-                    { label: 'Shop Rating', value: profile?.stats?.rating_avg || '5.0', icon: <Star className="w-6 h-6" />, color: 'bg-amber-50 text-amber-500' }
+                    { label: 'Shop Rating', value: seller?.stats?.avg_rating || '5.0', icon: <Star className="w-6 h-6" />, color: 'bg-amber-50 text-amber-500' }
                  ].map((kpi, i) => (
                     <Card key={i} className="rounded-[2.5rem] border-transparent shadow-premium overflow-hidden group hover:-translate-y-1 transition-all">
                        <CardHeader className="p-8 pb-4">

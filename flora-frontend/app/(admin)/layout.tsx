@@ -22,12 +22,12 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const ADMIN_LINKS = [
-  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { name: 'Orders', href: '/admin/orders', icon: ShoppingBag },
   { name: 'Products', href: '/admin/products', icon: Tags },
   { name: 'Sellers', href: '/admin/sellers', icon: Store },
   { name: 'Couriers', href: '/admin/couriers', icon: Truck },
-  { name: 'Users', href: '/admin/users', icon: Users },
+
   { name: 'Promotions', href: '/admin/promotions', icon: Star },
   { name: 'Banners', href: '/admin/banners', icon: ImageIcon },
   { name: 'Refunds & Reports', href: '/admin/refunds', icon: RotateCcw },
@@ -85,8 +85,8 @@ export default function AdminLayout({
                 <nav className="flex flex-col gap-1">
                   {ADMIN_LINKS.map((link) => {
                     const Icon = link.icon;
-                    const isActive = link.href === '/admin' 
-                      ? pathname === '/admin' 
+                    const isActive = link.href === '/admin/dashboard' 
+                      ? pathname === '/admin/dashboard' || pathname === '/admin'
                       : pathname.startsWith(link.href);
                     
                     return (

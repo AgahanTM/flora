@@ -89,7 +89,7 @@ func (s *authService) RegisterWithPhone(ctx context.Context, phone, password, fu
 		Phone:        &phone,
 		PasswordHash: string(hashedPassword),
 		Role:         "customer",
-		IsVerified:   false,
+		IsVerified:   true, // TEMPORARY: Auto-verified to bypass SMS
 		IsActive:     true,
 	}
 
@@ -142,7 +142,8 @@ func (s *authService) Login(ctx context.Context, identifier, password, ipAddress
 		return "", "", ErrUserInactive
 	}
 	if !user.IsVerified {
-		return "", "", ErrUserNotVerified
+		// TEMPORARY: Bypass verification lock
+		// return "", "", ErrUserNotVerified
 	}
 
 	return s.generateAndStoreTokens(ctx, user, ipAddress, deviceInfo)

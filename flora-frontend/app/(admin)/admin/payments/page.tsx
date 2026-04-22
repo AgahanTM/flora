@@ -37,14 +37,15 @@ export default function AdminPaymentsPage() {
       try {
         const { data } = await adminApi.getBankProofs();
         setFallbackMode(false);
-        return data as BankTransferProof[];
+        return (Array.isArray(data) ? data : (data?.data || [])) as BankTransferProof[];
       } catch (err: any) {
         if (err.response?.status === 404) {
           // Rule #17 Fallback
           setFallbackMode(true);
           const { data } = await apiClient.get('/admin/orders?payment=bank_transfer&status=pending');
           // Map orders to a compatible proof shape for display
-          return (data as Order[]).map(o => ({
+          const items = (Array.isArray(data) ? data : (data?.data || [])) as Order[];
+          return items.map(o => ({
             id: `fallback-${o.id}`,
             payment_id: o.id, // using order id as lookup
             image_url: '', 
@@ -63,7 +64,7 @@ export default function AdminPaymentsPage() {
     queryKey: ['admin-refunds'],
     queryFn: async () => {
       const { data } = await adminApi.getRefunds();
-      return data as Refund[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as Refund[];
     }
   });
 

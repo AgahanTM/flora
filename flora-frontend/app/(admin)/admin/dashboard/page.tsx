@@ -24,7 +24,7 @@ export default function AdminDashboardPage() {
     queryKey: ['admin-stats-daily'],
     queryFn: async () => {
       const { data } = await apiClient.get('/admin/analytics/daily?date=today');
-      return data as DailyStats;
+      return (data.data || data) as DailyStats;
     }
   });
 
@@ -32,7 +32,7 @@ export default function AdminDashboardPage() {
     queryKey: ['admin-health'],
     queryFn: async () => {
       const { data } = await apiClient.get('/health');
-      return data as { status: string, version: string };
+      return (data.data || data) as { status: string, version: string };
     }
   });
 
@@ -40,7 +40,7 @@ export default function AdminDashboardPage() {
     queryKey: ['admin-pending-sellers-count'],
     queryFn: async () => {
       const { data } = await apiClient.get('/admin/sellers?status=pending');
-      return (data as any[]).length;
+      return (Array.isArray(data) ? data : (data?.data || [])).length;
     }
   });
 

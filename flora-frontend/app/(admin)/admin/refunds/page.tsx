@@ -52,7 +52,7 @@ export default function AdminRefundsPage() {
     queryKey: ['admin-refunds', activeTab],
     queryFn: async () => {
       const { data } = await adminApi.getRefunds(activeTab);
-      return data as Refund[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as Refund[];
     }
   });
 

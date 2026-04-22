@@ -36,7 +36,7 @@ export default function AdminBannersPage() {
     queryKey: ['admin-banners'],
     queryFn: async () => {
       const { data } = await adminApi.getBanners();
-      return data as Banner[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as Banner[];
     }
   });
 

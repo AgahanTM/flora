@@ -39,7 +39,7 @@ export default function OccasionsPage() {
     queryKey: ['occasions'],
     queryFn: async () => {
       const { data } = await apiClient.get('/occasions');
-      return data as Occasion[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as Occasion[];
     }
   });
 
@@ -47,7 +47,7 @@ export default function OccasionsPage() {
     queryKey: ['saved-occasions'],
     queryFn: async () => {
       const { data } = await apiClient.get('/saved-occasions');
-      return data as SavedOccasion[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as SavedOccasion[];
     }
   });
 

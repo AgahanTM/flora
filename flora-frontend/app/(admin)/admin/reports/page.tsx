@@ -32,7 +32,7 @@ export default function AdminReportsPage() {
     queryKey: ['admin-issue-reports', activeTab],
     queryFn: async () => {
       const { data } = await adminApi.getIssueReports(activeTab);
-      return data as IssueReport[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as IssueReport[];
     }
   });
 

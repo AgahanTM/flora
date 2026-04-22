@@ -40,8 +40,8 @@ function SellerOrdersContent() {
     queryKey: ['seller-orders', currentTab],
     queryFn: async () => {
       const response = await apiClient.get(`/seller/orders?status=${currentTab}`);
-      // Response is likely an array directly
-      return response.data as Order[];
+      const data = response.data;
+      return (Array.isArray(data) ? data : (data?.data || [])) as Order[];
     }
   });
 

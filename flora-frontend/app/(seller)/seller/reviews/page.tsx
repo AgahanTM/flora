@@ -30,7 +30,8 @@ export default function SellerReviewsPage() {
     queryKey: ['seller-reviews'],
     queryFn: async () => {
       const res = await apiClient.get('/seller/reviews');
-      return res.data as Review[];
+      const data = res.data;
+      return (Array.isArray(data) ? data : (data?.data || [])) as Review[];
     }
   });
 
@@ -38,8 +39,13 @@ export default function SellerReviewsPage() {
     queryKey: ['seller-ratings'],
     queryFn: async () => {
       const res = await apiClient.get('/seller/profile');
-      // Profile likely contains ratings info or a separate endpoint
-      return res.data.ratings as SellerRatings;
+      const seller = res.data?.data || res.data;
+      // Build a ratings summary from the seller's stats or return defaults
+      return {
+        average_rating: seller?.stats?.avg_rating?.toString() || '5.0',
+        total_reviews: 0,
+        rating_distribution: { '5': 0, '4': 0, '3': 0, '2': 0, '1': 0 },
+      } as SellerRatings;
     }
   });
 

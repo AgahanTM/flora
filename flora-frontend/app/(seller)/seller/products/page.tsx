@@ -22,7 +22,7 @@ export default function SellerProductsPage() {
     queryFn: async () => {
       const response = await apiClient.get('/seller/products');
       // Response is likely an array of products
-      return response.data as Product[];
+      return (Array.isArray(response.data) ? response.data : (response?.data?.data || [])) as Product[];
     }
   });
 
@@ -63,7 +63,7 @@ export default function SellerProductsPage() {
   };
 
   const filteredProducts = products?.filter(p => 
-    p.name.toLowerCase().includes(search.toLowerCase())
+    (p.name || (p as any).title || '').toLowerCase().includes(search.toLowerCase())
   ) || [];
 
   return (

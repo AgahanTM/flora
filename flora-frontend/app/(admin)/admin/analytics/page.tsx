@@ -28,7 +28,7 @@ export default function AdminAnalyticsPage() {
     queryKey: ['admin-analytics-daily', selectedDate],
     queryFn: async () => {
       const { data } = await adminApi.getDailyAnalytics(selectedDate);
-      return data as DailyStats;
+      return (data.data || data) as DailyStats;
     }
   });
 
@@ -36,7 +36,7 @@ export default function AdminAnalyticsPage() {
     queryKey: ['admin-analytics-sellers', selectedDate],
     queryFn: async () => {
       const { data } = await adminApi.getSellerAnalytics(selectedDate);
-      return data as SellerStats[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as SellerStats[];
     }
   });
 
@@ -82,14 +82,14 @@ export default function AdminAnalyticsPage() {
          />
          <KPICard 
            label="Platform Orders" 
-           value={dailyStats?.total_orders.toString() || '0'} 
+           value={dailyStats?.total_orders?.toString() || '0'} 
            icon={<Package className="w-6 h-6" />} 
            trend="+5%" 
            isLoading={isDailyLoading}
          />
          <KPICard 
            label="New Patrons" 
-           value={dailyStats?.new_customers.toString() || '0'} 
+           value={dailyStats?.new_customers?.toString() || '0'} 
            icon={<Users className="w-6 h-6" />} 
            trend="+8%" 
            isLoading={isDailyLoading}

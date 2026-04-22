@@ -48,7 +48,7 @@ export default function NotificationsPage() {
           { channel: 'marketing', is_enabled: false },
         ] as NotificationPreference[];
       }
-      return data as NotificationPreference[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as NotificationPreference[];
     }
   });
 

@@ -45,7 +45,7 @@ export default function SellerManagementPage() {
     queryFn: async () => {
       const url = activeStatus === 'all' ? '/admin/sellers' : `/admin/sellers?status=${activeStatus}`;
       const { data } = await apiClient.get(url);
-      return data as Seller[];
+      return (Array.isArray(data) ? data : (data?.data || [])) as Seller[];
     }
   });
 
