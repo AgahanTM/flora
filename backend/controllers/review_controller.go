@@ -11,11 +11,15 @@ import (
 )
 
 type ReviewController struct {
-	service services.ReviewService
+	service       services.ReviewService
+	sellerService services.SellerService
 }
 
-func NewReviewController(service services.ReviewService) *ReviewController {
-	return &ReviewController{service: service}
+func NewReviewController(service services.ReviewService, sellerService services.SellerService) *ReviewController {
+	return &ReviewController{
+		service:       service,
+		sellerService: sellerService,
+	}
 }
 
 func (c *ReviewController) CreateReview(ctx *gin.Context) {
@@ -70,13 +74,20 @@ func (c *ReviewController) RespondToReview(ctx *gin.Context) {
 }
 
 func (c *ReviewController) GetSellerReviews(ctx *gin.Context) {
-	sellerIDStr, _ := ctx.Get("user_id")
-	sellerID, _ := uuid.Parse(sellerIDStr.(string))
+	userIDStr, _ := ctx.Get("user_id")
+	userID, _ := uuid.Parse(userIDStr.(string))
+
+	// Resolve sellerID from userID
+	seller, err := c.sellerService.GetSellerByUserID(ctx.Request.Context(), userID)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "seller not found"})
+		return
+	}
 
 	offset := 0
 	limit := 50
 
-	reviews, total, err := c.service.GetSellerReviews(ctx.Request.Context(), sellerID, offset, limit)
+	reviews, total, err := c.service.GetSellerReviews(ctx.Request.Context(), seller.ID, offset, limit)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

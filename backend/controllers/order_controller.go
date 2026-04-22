@@ -13,10 +13,14 @@ import (
 
 type OrderController struct {
 	orderService services.OrderService
+	sellerService services.SellerService
 }
 
-func NewOrderController(orderService services.OrderService) *OrderController {
-	return &OrderController{orderService: orderService}
+func NewOrderController(orderService services.OrderService, sellerService services.SellerService) *OrderController {
+	return &OrderController{
+		orderService: orderService,
+		sellerService: sellerService,
+	}
 }
 
 func (c *OrderController) PlaceOrder(ctx *gin.Context) {
@@ -125,13 +129,20 @@ func (c *OrderController) GetCustomerOrders(ctx *gin.Context) {
 
 func (c *OrderController) GetSellerOrders(ctx *gin.Context) {
 	userIDStr, _ := ctx.Get("user_id")
-	sellerID, _ := uuid.Parse(userIDStr.(string))
+	userID, _ := uuid.Parse(userIDStr.(string))
+
+	// Resolve sellerID from userID
+	seller, err := c.sellerService.GetSellerByUserID(ctx.Request.Context(), userID)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "seller not found"})
+		return
+	}
 
 	status := ctx.DefaultQuery("status", "")
 	limit, _ := strconv.Atoi(ctx.DefaultQuery("limit", "20"))
 	offset, _ := strconv.Atoi(ctx.DefaultQuery("offset", "0"))
 
-	orders, total, err := c.orderService.GetSellerOrders(ctx.Request.Context(), sellerID, status, offset, limit)
+	orders, total, err := c.orderService.GetSellerOrders(ctx.Request.Context(), seller.ID, status, offset, limit)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

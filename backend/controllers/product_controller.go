@@ -12,10 +12,14 @@ import (
 
 type ProductController struct {
 	productService services.ProductService
+	sellerService  services.SellerService
 }
 
-func NewProductController(productService services.ProductService) *ProductController {
-	return &ProductController{productService: productService}
+func NewProductController(productService services.ProductService, sellerService services.SellerService) *ProductController {
+	return &ProductController{
+		productService: productService,
+		sellerService:  sellerService,
+	}
 }
 
 func (c *ProductController) GetProducts(ctx *gin.Context) {
@@ -113,12 +117,19 @@ func (c *ProductController) Search(ctx *gin.Context) {
 
 func (c *ProductController) GetSellerProducts(ctx *gin.Context) {
 	userIDStr, _ := ctx.Get("user_id")
-	sellerID, _ := uuid.Parse(userIDStr.(string))
+	userID, _ := uuid.Parse(userIDStr.(string))
+
+	// Resolve sellerID from userID
+	seller, err := c.sellerService.GetSellerByUserID(ctx.Request.Context(), userID)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "seller not found"})
+		return
+	}
 
 	limit, _ := strconv.Atoi(ctx.DefaultQuery("limit", "50"))
 	offset, _ := strconv.Atoi(ctx.DefaultQuery("offset", "0"))
 
-	products, total, err := c.productService.GetSellerProducts(ctx.Request.Context(), sellerID, offset, limit)
+	products, total, err := c.productService.GetSellerProducts(ctx.Request.Context(), seller.ID, offset, limit)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
